@@ -1,5 +1,5 @@
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from models import UserInfo, Imc
+from ./src/models import UserInfo, Imc
 from pydantic import BaseModel
 from datetime import date
 

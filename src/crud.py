@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-import models, schemas
+from ./src import models, schemas
 import bcrypt
 from datetime import date
 
