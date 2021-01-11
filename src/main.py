@@ -8,11 +8,11 @@ from graphql import GraphQLError
 from jwt import PyJWTError
 from starlette.graphql import GraphQLApp
 from datetime import date
-import crud
-import models
+from . import crud
+from . import models
 from app_utils import decode_access_token
-from database import db_session, engine
-from schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
+from .database import db_session, engine
+from .schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -22,12 +22,11 @@ models.Base.metadata.create_all(bind=engine)
 
 
 class Query(graphene.ObjectType):
-    username = graphene.String()
     all_imc = graphene.List(ImcSchema)
-
-    def resolve_all_imc(self, info, username):
+    
+    def resolve_all_imc(self, info):
         query = ImcSchema.get_query(info)
-        all_imc = query.filter(models.Imc.username == username).all()
+        all_imc = query.all()
         return all_imc
 
 
@@ -145,5 +144,3 @@ app = FastAPI()
 app.add_route("/graphql", GraphQLApp(schema=graphene.Schema(query=Query, mutation=MyMutations)))
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host='0.0.0.0')
