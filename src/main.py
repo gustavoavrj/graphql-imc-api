@@ -13,6 +13,7 @@ from . import models
 from .app_utils import decode_access_token
 from .database import db_session, engine
 from .schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
+from fastapi.middleware.cors import CORSMiddleware
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -141,6 +142,16 @@ class MyMutations(graphene.ObjectType):
 
 
 app = FastAPI()
+origins = [
+    "https://fazst-imc-calculator.web.app",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_route("/graphql", GraphQLApp(schema=graphene.Schema(query=Query, mutation=MyMutations)))
 
 
