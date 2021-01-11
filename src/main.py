@@ -8,11 +8,11 @@ from graphql import GraphQLError
 from jwt import PyJWTError
 from starlette.graphql import GraphQLApp
 from datetime import date
-from . import crud
-from . import models
+import crud
+import models
 from app_utils import decode_access_token
-from .database import db_session, engine
-from .schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
+from database import db_session, engine
+from schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
