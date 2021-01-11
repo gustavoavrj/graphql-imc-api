@@ -110,15 +110,26 @@ class CreateNewImc(graphene.Mutation):
 
 class GetImc(graphene.Mutation):
     class Arguments:
-        username = graphene.String(required=True)
+        token = graphene.String(required=True)
 
-    ok = graphene.List(ImcSchema)
+    imc_history = graphene.List(ImcSchema)
 
     @staticmethod
-    def mutate(root, info, username):
+    def mutate(root, info, token):
         query = ImcSchema.get_query(info)
+        try:
+            payload = decode_access_token(data=token)
+            username: str = payload.get("sub")
+            if username is None:
+                raise GraphQLError("Invalid credentials")
+            token_data = TokenData(username=username)
+        except PyJWTError:
+            raise GraphQLError("Invalid credentials")
+        user = crud.get_user_by_username(db, username=token_data.username)
+        if user is None:
+            raise GraphQLError("Invalid credentials")
         all_imc = query.filter(models.Imc.username == username).all()
-        return CreateNewImc(ok=all_imc)
+        return CreateNewImc(imc_history=all_imc)
 
 
 
