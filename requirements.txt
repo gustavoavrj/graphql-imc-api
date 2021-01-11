@@ -1,0 +1,9 @@
+PyJWT==1.7.1
+fastapi
+uvicorn
+sqlalchemy
+mysql-connector-python
+bcrypt
+pytest
+graphene
+graphene-sqlalchemy
