@@ -74,7 +74,7 @@ class AuthenUser(graphene.Mutation):
             else:
                 from datetime import timedelta
                 access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-                from app_utils import create_access_token
+                from .app_utils import create_access_token
                 access_token = create_access_token(
                     data={"sub": username}, expires_delta=access_token_expires)
                 return AuthenUser(token=access_token)
