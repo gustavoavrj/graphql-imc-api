@@ -22,12 +22,13 @@ models.Base.metadata.create_all(bind=engine)
 
 
 class Query(graphene.ObjectType):
-
+    username = graphene.String()
     all_imc = graphene.List(ImcSchema)
 
-    def resolve_all_blogs(self, info):
-        query = ImcSchema.get_query(info)  # SQLAlchemy query
-        return query.all()
+    def resolve_all_imc(self, info, username):
+        query = ImcSchema.get_query(info)
+        all_imc = query.filter(models.Imc.username == username).all()
+        return all_imc
 
 
 class CreateUser(graphene.Mutation):
@@ -50,6 +51,8 @@ class CreateUser(graphene.Mutation):
         user_info = UserCreate(username=username, password=password, fullname=fullname)
         crud.create_user(db, user_info)
         return CreateUser(user=user, ok=ok)
+
+
 
 
 class AuthenUser(graphene.Mutation):
@@ -104,10 +107,27 @@ class CreateNewImc(graphene.Mutation):
         return CreateNewImc(ok=ok)
 
 
+
+class GetImc(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+
+    ok = graphene.List(ImcSchema)
+
+    @staticmethod
+    def mutate(root, info, username):
+        query = ImcSchema.get_query(info)
+        all_imc = query.filter(models.Imc.username == username).all()
+        return CreateNewImc(ok=all_imc)
+
+
+
+
 class MyMutations(graphene.ObjectType):
     user = CreateUser.Field()
     authen_user = AuthenUser.Field()
     create_new_imc = CreateNewImc.Field()
+    get_imc = GetImc.Field()
 
 
 app = FastAPI()

@@ -22,16 +22,16 @@ def check_username_password(db: Session, user: schemas.UserAuthenticate):
 
 
 def create_new_imc(db: Session, imc: schemas.ImcBase):
-    db_blog = models.Imc(username=imc.username, imc=imc.imc, date=date.today())
-    db.add(db_blog)
+    db_imc = models.Imc(username=imc.username, imc=imc.imc, date=date.today())
+    db.add(db_imc)
     db.commit()
-    db.refresh(db_blog)
-    return db_blog
+    db.refresh(db_imc)
+    return db_imc
 
 
-def get_all_blogs(db: Session):
-    return db.query(models.Blog).all()
+def get_all_imcs(db: Session):
+    return db.query(models.Imc).all()
 
 
-def get_blog_by_id(db: Session, blog_id: int):
-    return db.query(models.Blog).filter(models.Blog.id == blog_id).first()
+def get_imc_by_username(db: Session, username: str):
+    return db.query(models.Imc).filter(models.Imc.username == username).first()

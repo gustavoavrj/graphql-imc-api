@@ -17,4 +17,4 @@ class Imc(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(25))
     imc = Column(String(10))
-    date = Column(Date())
+    date = Column(Date)
