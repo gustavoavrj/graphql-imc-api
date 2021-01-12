@@ -129,7 +129,7 @@ class GetImc(graphene.Mutation):
         if user is None:
             raise GraphQLError("Invalid credentials")
         all_imc = query.filter(models.Imc.username == username).all()
-        return CreateNewImc(imc_history=all_imc)
+        return GetImc(imc_history=all_imc)
 
 
 
