@@ -8,11 +8,11 @@ from graphql import GraphQLError
 from jwt import PyJWTError
 from starlette.graphql import GraphQLApp
 from datetime import date
-from . import crud
-from . import models
-from .app_utils import decode_access_token
-from .database import db_session, engine
-from .schemas import ImcSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, ImcBase
+import crud
+import models
+from app_utils import decode_access_token
+from database import db_session, engine
+from schemas import AnimeSchema, UserInfoSchema, UserCreate, UserAuthenticate, TokenData, AnimeBase
 from fastapi.middleware.cors import CORSMiddleware
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -23,10 +23,10 @@ models.Base.metadata.create_all(bind=engine)
 
 
 class Query(graphene.ObjectType):
-    all_imc = graphene.List(ImcSchema)
+    all_imc = graphene.List(AnimeSchema)
     
     def resolve_all_imc(self, info):
-        query = ImcSchema.get_query(info)
+        query = AnimeSchema.get_query(info)
         all_imc = query.all()
         return all_imc
 
@@ -75,7 +75,7 @@ class AuthenUser(graphene.Mutation):
             else:
                 from datetime import timedelta
                 access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-                from .app_utils import create_access_token
+                from app_utils import create_access_token
                 access_token = create_access_token(
                     data={"sub": username}, expires_delta=access_token_expires)
                 return AuthenUser(token=access_token)
@@ -108,15 +108,15 @@ class CreateNewImc(graphene.Mutation):
 
 
 
-class GetImc(graphene.Mutation):
+class GetAnimeList(graphene.Mutation):
     class Arguments:
         token = graphene.String(required=True)
 
-    imc_history = graphene.List(ImcSchema)
+    getAnimeList = graphene.List(AnimeSchema)
 
     @staticmethod
     def mutate(root, info, token):
-        query = ImcSchema.get_query(info)
+        query = AnimeSchema.get_query(info)
         try:
             payload = decode_access_token(data=token)
             username: str = payload.get("sub")
@@ -128,8 +128,8 @@ class GetImc(graphene.Mutation):
         user = crud.get_user_by_username(db, username=token_data.username)
         if user is None:
             raise GraphQLError("Invalid credentials")
-        all_imc = query.filter(models.Imc.username == username).all()
-        return GetImc(imc_history=all_imc)
+        getAnimeList = query.all()
+        return GetAnimeList(getAnimeList=getAnimeList)
 
 
 
@@ -138,12 +138,12 @@ class MyMutations(graphene.ObjectType):
     user = CreateUser.Field()
     authen_user = AuthenUser.Field()
     create_new_imc = CreateNewImc.Field()
-    get_imc = GetImc.Field()
+    get_anime_list = GetAnimeList.Field()
 
 
 app = FastAPI()
 origins = [
-    "https://fazst-imc-calculator.web.app",
+    "localhost",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -154,4 +154,5 @@ app.add_middleware(
 )
 app.add_route("/graphql", GraphQLApp(schema=graphene.Schema(query=Query, mutation=MyMutations)))
 
-
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)

@@ -1,7 +1,7 @@
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from .models import UserInfo, Imc
+from models import UserInfo, Anime
 from pydantic import BaseModel
-from datetime import date
+from datetime import datetime
 
 
 class UserInfoBase(BaseModel):
@@ -33,14 +33,23 @@ class TokenData(BaseModel):
     username: str = None
 
 
-class ImcBase(BaseModel):
-    imc: str
-    username: str
-    date: date
+class AnimeBase(BaseModel):
+    anime_id: int
+    title: str
+    url: str
+    image_path: str
+    airing_status: int
+    num_episodes: int
+    mpaa_rating: str
+    last_scraped_date: datetime
+    title_japanese: str
+    synopsis: str
+    title_english: str
 
 
-class ImcInformation(ImcBase):
+class ImcInformation(AnimeBase):
     id: int
+
 
     class Config:
         orm_mode = True
@@ -51,6 +60,6 @@ class UserInfoSchema(SQLAlchemyObjectType):
         model = UserInfo
 
 
-class ImcSchema(SQLAlchemyObjectType):
+class AnimeSchema(SQLAlchemyObjectType):
     class Meta:
-        model = Imc
+        model = Anime
