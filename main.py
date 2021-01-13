@@ -112,7 +112,7 @@ class GetAnimeList(graphene.Mutation):
     class Arguments:
         token = graphene.String(required=True)
 
-    getAnimeList = graphene.List(AnimeSchema)
+    AnimeList = graphene.List(AnimeSchema)
 
     @staticmethod
     def mutate(root, info, token):
@@ -128,8 +128,8 @@ class GetAnimeList(graphene.Mutation):
         user = crud.get_user_by_username(db, username=token_data.username)
         if user is None:
             raise GraphQLError("Invalid credentials")
-        getAnimeList = query.all()
-        return GetAnimeList(getAnimeList=getAnimeList)
+        AnimeList = query.all()
+        return GetAnimeList(AnimeList=AnimeList)
 
 
 
@@ -143,7 +143,8 @@ class MyMutations(graphene.ObjectType):
 
 app = FastAPI()
 origins = [
-    "localhost",
+    "http://localhost",
+    "http://localhost:4200"
 ]
 app.add_middleware(
     CORSMiddleware,
