@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date,TIMESTAMP
 from database import Base
 
-
 class UserInfo(Base):
     __tablename__ = "user_info"
 
@@ -25,3 +24,4 @@ class Anime(Base):
     title_japanese = Column(String(100))
     synopsis = Column(String(500))
     title_english = Column(String(100))
+

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-
+import json
 SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://postgres:123@localhost/anime"
 
 engine = create_engine(
@@ -13,3 +13,4 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 
 Base = declarative_base()
 Base.query = db_session.query_property()
+
